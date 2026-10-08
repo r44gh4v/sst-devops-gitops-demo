@@ -11,7 +11,7 @@ You  →  git push  →  GitHub  →  Argo CD detects change  →  Kubernetes up
 ## Repository Structure
 
 ```
-gitops-demo/
+sst-devops-gitops-demo/
 ├── README.md                        ← this file
 └── app/
     ├── deployment.yaml              ← your actual application (nginx pods)
@@ -38,7 +38,7 @@ gitops-demo/
 | Tool | Install |
 |------|---------|
 | Docker Desktop | https://www.docker.com/products/docker-desktop/ |
-| kind | https://kind.sigs.k8s.io/docs/user/quick-start/#installation |
+| minikube | https://minikube.sigs.k8s.io/docs/start/ |
 | kubectl | https://kubernetes.io/docs/tasks/tools/ |
 
 ---
@@ -46,7 +46,7 @@ gitops-demo/
 ## Step 1 — Create a Local Kubernetes Cluster
 
 ```bash
-kind create cluster --name session20
+minikube start -p session20
 ```
 
 Verify it is running:
@@ -60,7 +60,7 @@ Expected:
 
 ```
 NAME                     STATUS   ROLES
-session20-control-plane  Ready    control-plane
+session20  Ready    control-plane
 ```
 
 ---
@@ -142,7 +142,7 @@ kubectl apply -f app/argocd-application.yaml
 ```yaml
 # app/argocd-application.yaml
 source:
-  repoURL: https://github.com/Nency-Ravaliya/gitops-demo.git
+  repoURL: https://github.com/r44gh4v/sst-devops-gitops-demo.git
   targetRevision: main
   path: app          # ← Argo CD reads deployment.yaml + service.yaml from here
 
@@ -307,7 +307,7 @@ session20-gitops-app   3/3     3            3
                            │
                            ▼
                    GitHub Repository
-             (Nency-Ravaliya/gitops-demo)
+             (r44gh4v/sst-devops-gitops-demo)
                            │
               Argo CD polls every 3 minutes
                            │
@@ -322,7 +322,7 @@ session20-gitops-app   3/3     3            3
                            │
                            ▼
             ┌──────────────────────────┐
-            │  Kubernetes (kind)       │
+            │  Kubernetes (minikube)   │
             │  namespace: session20    │
             │  session20-gitops-app    │
             │  (nginx pods updated)    │
@@ -380,7 +380,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 kubectl delete -f app/argocd-application.yaml
 
 # Delete the local Kubernetes cluster entirely
-kind delete cluster --name session20
+minikube delete -p session20
 ```
 
 ---
